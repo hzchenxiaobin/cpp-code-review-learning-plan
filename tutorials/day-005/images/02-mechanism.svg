@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="15" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">复盘方法论：为什么“隔夜重看”这么灵</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">今天的演练设计 = 用“陌生感”把自己变成 reviewer</text>
+
+  <!-- 左：间隔效应 -->
+  <rect x="40" y="100" width="430" height="240" rx="12" fill="#f7fbf5" stroke="#7fa66a" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="65" y="128" font-size="15" font-weight="700" fill="#5c7a4e">① 间隔重看：制造“reviewer 视角”</text>
+  <path d="M 80 300 Q 160 200 240 170 Q 320 145 400 220" fill="none" stroke="#5b8db8" stroke-width="2.6"/>
+  <path d="M 400 220 Q 300 235 240 255 Q 150 280 80 235" fill="none" stroke="#cf6a5a" stroke-width="2.6" stroke-dasharray="8 5"/>
+  <circle cx="240" cy="170" r="5" fill="#5b8db8"/>
+  <text x="252" y="160" font-size="12.5" fill="#2f5d8a">写代码当天：作者视角，细节全在脑子里</text>
+  <circle cx="240" cy="255" r="5" fill="#cf6a5a"/>
+  <text x="252" y="278" font-size="12.5" fill="#8f4a3e">隔夜重看：细节淡忘 → 只剩“代码本身说话”</text>
+  <text x="65" y="318" font-size="12.5" fill="#7a796f">这正是读同事 diff 时的状态——所以它是最好的自我训练</text>
+
+  <!-- 右：机器 vs 人（实测数据） -->
+  <rect x="490" y="100" width="430" height="240" rx="12" fill="#fdf6f4" stroke="#cf6a5a" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="515" y="128" font-size="15" font-weight="700" fill="#b3544a">② 机器 vs 人：7 个埋点的实测战果</text>
+  <g filter="url(#rough)">
+    <rect x="515" y="150" width="380" height="46" rx="8" fill="#eef4e8" stroke="#7fa66a" stroke-width="2"/>
+    <rect x="515" y="210" width="380" height="46" rx="8" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2"/>
+  </g>
+  <text x="530" y="178" font-size="13.5" fill="#5c7a4e">编译器（-Wall -Wextra）抓到 1 个：虚析构缺失</text>
+  <text x="530" y="238" font-size="13.5" fill="#b3544a">人类 reviewer 必须抓到 7 个：全部所有权/路径类</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="515" y="284">运行症状可见 4 个（缺 [-] 日志 / alive=3 / size 不变 / data 空）</text>
+    <text x="515" y="306">完全潜伏 3 个（失败路径泄漏 / get() 逃逸 / lock 未判空）</text>
+    <text x="515" y="328" fill="#8f4a3e">教训：症状 ≠ 全部，“看起来正常”是 review 的常态输入</text>
+  </g>
+
+  <!-- 底部：归因三分法 -->
+  <rect x="40" y="366" width="880" height="150" rx="12" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.4" filter="url(#rough)"/>
+  <text x="480" y="396" text-anchor="middle" font-size="15.5" font-weight="700" fill="#2f5d8a">漏判归因三分法（每条漏判都要归入一类）</text>
+  <g filter="url(#rough)">
+    <rect x="70" y="414" width="260" height="82" rx="9" fill="#fffdf6" stroke="#5b8db8" stroke-width="2"/>
+    <rect x="350" y="414" width="260" height="82" rx="9" fill="#fffdf6" stroke="#e09552" stroke-width="2"/>
+    <rect x="630" y="414" width="260" height="82" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="200" y="440" font-size="14" font-weight="700">知识缺</text>
+    <text x="200" y="462" font-size="12">不知道这个规则</text>
+    <text x="200" y="482" font-size="12" fill="#5c897f">→ 回读当天教程 + 书</text>
+    <text x="480" y="440" font-size="14" font-weight="700">流程缺</text>
+    <text x="480" y="462" font-size="12">没查所有路径 / 方向图</text>
+    <text x="480" y="482" font-size="12" fill="#5c897f">→ 补进 checklist 当步骤</text>
+    <text x="760" y="440" font-size="14" font-weight="700">注意力缺</text>
+    <text x="760" y="462" font-size="12">知道但当时滑过去了</text>
+    <text x="760" y="482" font-size="12" fill="#5c897f">→ 缩短单次 review 时长</text>
+  </g>
+</svg>

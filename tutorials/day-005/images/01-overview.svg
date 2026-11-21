@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="460" viewBox="0 0 960 460" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="8" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="460" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">Day 5 · 第一周综合复盘</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">阶段 0 · 第 1 周收官 ｜ 产出：mini 项目 + 找 bug 演练 + checklist v0.1</text>
+
+  <!-- 第 1 周全绿 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="94" width="155" height="56" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.2"/>
+    <rect x="225" y="94" width="155" height="56" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.2"/>
+    <rect x="405" y="94" width="155" height="56" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.2"/>
+    <rect x="585" y="94" width="155" height="56" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.2"/>
+    <rect x="765" y="94" width="150" height="56" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="3.2"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="122" y="117" font-size="13.5" font-weight="700" fill="#5c7a4e">Day 1 ✓</text>
+    <text x="122" y="138" font-size="12" fill="#7a796f">警告全开</text>
+    <text x="302" y="117" font-size="13.5" font-weight="700" fill="#5c7a4e">Day 2 ✓</text>
+    <text x="302" y="138" font-size="12" fill="#7a796f">RAII</text>
+    <text x="482" y="117" font-size="13.5" font-weight="700" fill="#5c7a4e">Day 3 ✓</text>
+    <text x="482" y="138" font-size="12" fill="#7a796f">独占+移动</text>
+    <text x="662" y="117" font-size="13.5" font-weight="700" fill="#5c7a4e">Day 4 ✓</text>
+    <text x="662" y="138" font-size="12" fill="#7a796f">共享+弱</text>
+    <text x="840" y="117" font-size="13.5" font-weight="700" fill="#c07a3e">Day 5 · 今天</text>
+    <text x="840" y="138" font-size="12">综合复盘</text>
+  </g>
+
+  <!-- 知识链 -->
+  <g filter="url(#rough)">
+    <rect x="60" y="186" width="150" height="64" rx="10" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.2"/>
+    <rect x="250" y="186" width="150" height="64" rx="10" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.2"/>
+    <rect x="440" y="186" width="150" height="64" rx="10" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.2"/>
+    <rect x="630" y="186" width="150" height="64" rx="10" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.2"/>
+    <rect x="45" y="286" width="280" height="60" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.6"/>
+  </g>
+  <g text-anchor="middle" font-size="13">
+    <text x="135" y="212">编译器当</text>
+    <text x="135" y="232">第一位 reviewer</text>
+    <text x="325" y="212">资源释放绑定</text>
+    <text x="325" y="232">对象生命周期</text>
+    <text x="515" y="212">偷指针转移</text>
+    <text x="515" y="232">所有权单向化</text>
+    <text x="705" y="212">计数 + 打环</text>
+    <text x="705" y="232">向下强向上弱</text>
+    <text x="185" y="310" font-weight="700" fill="#c07a3e">找 bug 演练（今天）</text>
+    <text x="185" y="332" font-size="12">检验以上全部</text>
+  </g>
+  <g stroke="#4a4943" stroke-width="2.2" marker-end="url(#arr)">
+    <line x1="212" y1="218" x2="247" y2="218"/>
+    <line x1="402" y1="218" x2="437" y2="218"/>
+    <line x1="592" y1="218" x2="627" y2="218"/>
+    <line x1="705" y1="252" x2="450" y2="300" stroke-dasharray="6 4"/>
+  </g>
+
+  <!-- 里程碑提示 -->
+  <rect x="415" y="286" width="500" height="60" rx="10" fill="#f7fbf5" stroke="#7fa66a" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="665" y="310" text-anchor="middle" font-size="14" font-weight="700" fill="#5c7a4e">下一站：M0 里程碑（第 2 周末）</text>
+  <text x="665" y="332" text-anchor="middle" font-size="12.5" fill="#7a796f">不看资料讲清所有权 / moved-from / 异常安全三等级</text>
+
+  <rect x="45" y="396" width="870" height="46" rx="10" fill="#eef4fa" fill-opacity="0.6" stroke="#5b8db8" stroke-width="2" stroke-dasharray="7 5" filter="url(#rough)"/>
+  <text x="480" y="425" text-anchor="middle" font-size="15" fill="#3f3e38">今天三件事：① mini 项目把 Day1–4 串起来 ② 限时找 7 个 bug ③ checklist v0.1 定稿 + 漏判归因</text>
+</svg>

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="26" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="46" text-anchor="middle" font-size="26" font-weight="700" fill="#3f3e38">buggy_demo 解剖图：7 个埋点的位置与命运</text>
+  <text x="480" y="72" text-anchor="middle" font-size="15" fill="#7a796f">先不看这张图自己找！——它是答案地图</text>
+
+  <!-- 表格化解剖 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="94" width="870" height="38" rx="8" fill="#eef4fa" stroke="#5b8db8" stroke-width="2"/>
+  </g>
+  <g font-size="13" font-weight="700" fill="#2f5d8a">
+    <text x="62" y="118">#</text>
+    <text x="100" y="118">位置</text>
+    <text x="270" y="118">问题</text>
+    <text x="620" y="118">谁抓 / 症状</text>
+  </g>
+
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="62" y="156">1</text><text x="100" y="156">[A] 失败分支</text><text x="270" y="156">FILE* 提前 return 泄漏（fclose 被绕过）</text><text x="620" y="156" fill="#b3544a">人 / 潜伏（路径未触发）</text>
+    <text x="62" y="186">2</text><text x="100" y="186">[B] Session.hub</text><text x="270" y="186">回头强引用成环：Hub ⇄ Session</text><text x="620" y="186" fill="#a3663a">人 / 可见（无 [-] 日志，alive+2）</text>
+    <text x="62" y="216">3</text><text x="100" y="216">[C] ~Asset 非虚</text><text x="270" y="216">基类指针 delete：Futures 部分泄漏</text><text x="620" y="216" fill="#5c7a4e">机器也抓到了！-Wdelete-…-dtor</text>
+    <text x="62" y="246">4</text><text x="100" y="246">[E] g_escaped</text><text x="270" y="246">get() 裸指针逃逸到全局，guard 失效</text><text x="620" y="246" fill="#b3544a">人 / 潜伏（分支未执行）</text>
+    <text x="62" y="276">5</text><text x="100" y="276">[D] const big</text><text x="270" y="276">const 上 std::move → 静默拷贝 1MB</text><text x="620" y="276" fill="#a3663a">人 / 可见（big.size() 不变）</text>
+    <text x="62" y="306">6</text><text x="100" y="306">[F] lock() 未判空</text><text x="270" y="306">weak_ptr::lock 结果直接解引用</text><text x="620" y="306" fill="#b3544a">人 / 潜伏（今天碰巧活着）</text>
+    <text x="62" y="336">7</text><text x="100" y="336">[D] move 后使用</text><text x="270" y="336">data 被 move 后继续打印（UB 邻域）</text><text x="620" y="336" fill="#a3663a">人 / 可见（data 为空）</text>
+  </g>
+
+  <line x1="60" y1="356" x2="900" y2="356" stroke="#8a897f" stroke-width="1.6"/>
+
+  <!-- 战果统计 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="376" width="425" height="76" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.4"/>
+    <rect x="490" y="376" width="425" height="76" rx="10" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.4"/>
+  </g>
+  <text x="258" y="406" text-anchor="middle" font-size="14.5" font-weight="700" fill="#5c7a4e">编译实测：0 error + 1 warning</text>
+  <text x="258" y="432" text-anchor="middle" font-size="12.5" fill="#5c897f">若 CI 开 -Werror：bug 3 根本进不了仓库</text>
+  <text x="702" y="406" text-anchor="middle" font-size="14.5" font-weight="700" fill="#b3544a">运行实测：退出码 0，alive = 3</text>
+  <text x="702" y="432" text-anchor="middle" font-size="12.5" fill="#8f4a3e">“大体能跑”= 7 个问题里只有 4 个露了马脚</text>
+
+  <rect x="45" y="470" width="870" height="48" rx="10" fill="#eef4fa" fill-opacity="0.6" stroke="#5b8db8" stroke-width="2" stroke-dasharray="7 5" filter="url(#rough)"/>
+  <text x="480" y="500" text-anchor="middle" font-size="14.5" fill="#3f3e38">修复目标：alive = 0、每类资源 [-] 日志配对、const/move/lock 全部按规则书写 —— 对照 weekly_demo.cpp 即为标准答案</text>
+</svg>
