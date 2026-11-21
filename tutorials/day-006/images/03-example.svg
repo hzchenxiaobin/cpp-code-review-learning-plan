@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="29" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="46" text-anchor="middle" font-size="26" font-weight="700" fill="#3f3e38">实测速查表：值类别判定 + 三处意外</text>
+  <text x="480" y="72" text-anchor="middle" font-size="15" fill="#7a796f">value_categories.cpp 的真实打印结果（decltype 探针）</text>
+
+  <!-- 速查表 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="92" width="870" height="34" rx="8" fill="#eef4fa" stroke="#5b8db8" stroke-width="2"/>
+  </g>
+  <g font-size="13" font-weight="700" fill="#2f5d8a">
+    <text x="62" y="114">表达式</text>
+    <text x="360" y="114">类别</text>
+    <text x="560" y="114">备注</text>
+  </g>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="62" y="152">x / arr[0] / *p</text><text x="360" y="152">lvalue 左值</text><text x="560" y="152">有名字、可取地址</text>
+    <text x="62" y="180">42 / x + 1 / get()</text><text x="360" y="180">prvalue 纯右值</text><text x="560" y="180">字面量、算术结果、按值返回</text>
+    <text x="62" y="208">std::move(x)</text><text x="360" y="208" fill="#c07a3e">xvalue 将亡值</text><text x="560" y="208">move 的产物本身</text>
+    <text x="62" y="240" fill="#8f4a3e" font-weight="700">x = 99</text><text x="360" y="240" fill="#8f4a3e" font-weight="700">lvalue！</text><text x="560" y="240" fill="#8f4a3e">赋值表达式返回左值（探针未执行它）</text>
+    <text x="62" y="268" fill="#8f4a3e" font-weight="700">++x 与 x++</text><text x="360" y="268" fill="#8f4a3e" font-weight="700">lvalue vs prvalue</text><text x="560" y="268" fill="#8f4a3e">后置返回旧值临时——移动语义拿不到它</text>
+    <text x="62" y="296" fill="#8f4a3e" font-weight="700">int&amp;&amp; rr = 42;</text><text x="360" y="296" fill="#8f4a3e" font-weight="700">rr 是 lvalue</text><text x="560" y="296" fill="#8f4a3e">具名右值引用本身是左值（Day 8 转发的动机）</text>
+  </g>
+  <line x1="60" y1="316" x2="900" y2="316" stroke="#8a897f" stroke-width="1.6"/>
+
+  <!-- 绑定规则 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="336" width="425" height="104" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.4"/>
+    <rect x="490" y="336" width="425" height="104" rx="10" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.4"/>
+  </g>
+  <text x="258" y="366" text-anchor="middle" font-size="14.5" font-weight="700" fill="#5c7a4e">绑定允许（实测 OK）</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="68" y="392">int&amp;  ← 左值</text>
+    <text x="68" y="414">int&amp;&amp; ← 右值（42 等 prvalue）</text>
+    <text x="68" y="432" fill="#5c7a4e">const int&amp; ← 右值，且延长临时生命周期</text>
+  </g>
+  <text x="702" y="366" text-anchor="middle" font-size="14.5" font-weight="700" fill="#b3544a">绑定拒绝（实测编译错误）</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="513" y="392" fill="#b3544a">int&amp;&amp; ← 左值：rvalue reference ... cannot bind</text>
+    <text x="513" y="414" fill="#b3544a">int&amp; ← 右值：non-const lvalue reference ...</text>
+    <text x="513" y="436" fill="#7a796f">（两条真实报错原文见教程演练 3）</text>
+  </g>
+
+  <!-- Day 5 挑战答案 -->
+  <rect x="45" y="458" width="870" height="60" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="68" y="483" font-size="14" font-weight="700" fill="#a3663a">昨日预告挑战的答案：</text>
+  <text x="68" y="505" font-size="13" fill="#3f3e38">string_view sv = "abc"; 安全（指向静态存储）；string_view sv2 = string("abc"); 悬垂！—— const&amp; 能延长临时寿命，view 类型不延长（Day 27 专题 + ASan 实证）</text>
+</svg>

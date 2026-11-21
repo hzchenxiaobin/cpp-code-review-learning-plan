@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="13" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">值类别驱动世界的两个机关</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">重载决议怎么选 &amp; decltype 怎么看</text>
+
+  <!-- 左：重载决议 -->
+  <rect x="40" y="100" width="440" height="250" rx="12" fill="#f7fbf5" stroke="#7fa66a" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="65" y="128" font-size="15" font-weight="700" fill="#5c7a4e">① 重载决议：表达式类别 → 拷贝/移动</text>
+  <g filter="url(#rough)">
+    <rect x="65" y="146" width="390" height="40" rx="8" fill="#fffdf6" stroke="#7fa66a" stroke-width="1.8"/>
+    <rect x="65" y="196" width="390" height="40" rx="8" fill="#fffdf6" stroke="#7fa66a" stroke-width="1.8"/>
+    <rect x="65" y="246" width="390" height="40" rx="8" fill="#fffdf6" stroke="#7fa66a" stroke-width="1.8"/>
+  </g>
+  <g font-size="13" fill="#3f3e38">
+    <text x="80" y="171">pick(b)            → const Buf&amp;（拷贝阵营）</text>
+    <text x="80" y="221">pick(std::move(b)) → Buf&amp;&amp;（移动阵营）</text>
+    <text x="80" y="271">pick(Buf("临时"))   → Buf&amp;&amp;（移动阵营）</text>
+  </g>
+  <g font-size="12.5">
+    <text x="65" y="312" fill="#a3663a">关键：具名的 &amp;&amp; 变量本身是左值！</text>
+    <text x="65" y="332" fill="#7a796f">（rr 有名字、能取地址 → 再传就拷贝，除非再 move）</text>
+  </g>
+
+  <!-- 右：decltype 规则 -->
+  <rect x="500" y="100" width="420" height="250" rx="12" fill="#fdf6f4" stroke="#cf6a5a" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="525" y="128" font-size="15" font-weight="700" fill="#b3544a">② decltype：一对括号之差</text>
+  <g font-size="13.5" fill="#3f3e38">
+    <text x="525" y="162">decltype(x)</text>
+    <text x="790" y="162" fill="#5c7a4e">int（声明类型）</text>
+    <text x="525" y="192">decltype((x))</text>
+    <text x="790" y="192" fill="#b3544a">int&amp;（值类别进入结果）</text>
+    <text x="525" y="222">decltype(std::move(x))</text>
+    <text x="790" y="222" fill="#c07a3e">int&amp;&amp;（xvalue）</text>
+    <text x="525" y="252">decltype(42)</text>
+    <text x="790" y="252" fill="#5c7a4e">int（prvalue）</text>
+  </g>
+  <line x1="525" y1="268" x2="900" y2="268" stroke="#8a897f" stroke-width="1.4"/>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="525" y="292">推论：decltype(auto) f() { return (x); }</text>
+    <text x="525" y="312" fill="#b3544a">→ 返回 int&amp;：局部变量即悬垂！</text>
+    <text x="525" y="332" fill="#7a796f">review 看到 return (x) 直接亮红灯</text>
+  </g>
+
+  <!-- 底部：std::move 的本质 -->
+  <rect x="40" y="376" width="880" height="140" rx="12" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.4" filter="url(#rough)"/>
+  <text x="480" y="406" text-anchor="middle" font-size="15.5" font-weight="700" fill="#2f5d8a">std::move 的本质：只是贴标签，不搬任何东西</text>
+  <g filter="url(#rough)">
+    <rect x="90" y="428" width="220" height="56" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.4"/>
+    <rect x="370" y="428" width="220" height="56" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.4"/>
+    <rect x="650" y="428" width="220" height="56" rx="10" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.4"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="200" y="452" font-size="13.5" font-weight="700">lvalue（有身份）</text>
+    <text x="200" y="472" font-size="12" fill="#7a796f">如具名变量 b</text>
+    <text x="480" y="452" font-size="13.5" font-weight="700" fill="#c07a3e">std::move(b)</text>
+    <text x="480" y="472" font-size="12" fill="#7a796f">static_cast 转成 xvalue</text>
+    <text x="760" y="452" font-size="13.5" font-weight="700" fill="#b3544a">重载决议选中移动</text>
+    <text x="760" y="472" font-size="12" fill="#7a796f">偷指针才真正发生</text>
+  </g>
+  <g stroke="#4a4943" stroke-width="2.4" marker-end="url(#arr)">
+    <line x1="314" y1="456" x2="366" y2="456"/>
+    <line x1="594" y1="456" x2="646" y2="456"/>
+  </g>
+</svg>
