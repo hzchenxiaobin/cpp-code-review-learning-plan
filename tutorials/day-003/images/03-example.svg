@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="21" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">实测三连：掏空 · 退化 · 拒绝</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">move_semantics.cpp 与 copy_error.cpp 的真实运行 / 编译记录</text>
+
+  <!-- 实测 1：掏空 -->
+  <rect x="45" y="100" width="280" height="230" rx="12" fill="#fdf6e3" stroke="#e09552" stroke-width="2.4" filter="url(#rough)"/>
+  <text x="68" y="128" font-size="14.5" font-weight="700" fill="#a3663a">① 偷指针（实测）</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="68" y="158">[A] 构造：data_ = 0x100a35160</text>
+    <text x="68" y="184">[A] 移动构造：接管 0x100a35160</text>
+    <text x="68" y="206">　　（源已置空）</text>
+    <text x="68" y="236">a.empty() = 1（源被掏空）</text>
+    <text x="68" y="262">b.empty() = 0（接管成功）</text>
+    <text x="68" y="292" fill="#7a796f">析构时：A 释放 0x0（无害）</text>
+    <text x="68" y="312" fill="#7a796f">　　　　B 释放 0x100a…（一次）</text>
+  </g>
+
+  <!-- 实测 2：退化 -->
+  <rect x="345" y="100" width="280" height="230" rx="12" fill="#fbeedd" stroke="#cf6a5a" stroke-width="2.4" filter="url(#rough)"/>
+  <text x="368" y="128" font-size="14.5" font-weight="700" fill="#b3544a">② const 退化拷贝（实测）</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="368" y="158">const string s = "我会原地不动";</text>
+    <text x="368" y="184">string t = std::move(s);</text>
+    <text x="368" y="214">移动后 s 仍是 "我会原地不动"</text>
+    <text x="368" y="236">（长度 18，根本没被搬走）</text>
+    <text x="368" y="272" fill="#b3544a">没有报错、没有警告——</text>
+    <text x="368" y="294" fill="#b3544a">性能优化悄悄落空</text>
+  </g>
+
+  <!-- 实测 3：拒绝 -->
+  <rect x="645" y="100" width="270" height="230" rx="12" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.4" filter="url(#rough)"/>
+  <text x="668" y="128" font-size="14.5" font-weight="700" fill="#b3544a">③ 拷贝被拒绝（实测）</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="668" y="158">unique_ptr&lt;int&gt; a = ...;</text>
+    <text x="668" y="184">unique_ptr&lt;int&gt; b = a;</text>
+    <text x="668" y="214" fill="#b3544a" font-weight="700">error: call to implicitly-</text>
+    <text x="668" y="236" fill="#b3544a" font-weight="700">deleted copy constructor</text>
+    <text x="668" y="266" fill="#5c7a4e">✓ 好事：所有权冲突</text>
+    <text x="668" y="288" fill="#5c7a4e">　 在编译期就暴露</text>
+  </g>
+
+  <!-- 三条语义结论 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="356" width="870" height="150" rx="12" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.4"/>
+  </g>
+  <text x="480" y="386" text-anchor="middle" font-size="15.5" font-weight="700" fill="#2f5d8a">unique_ptr 三条语义结论（写进 checklist）</text>
+  <g font-size="14" fill="#3f3e38">
+    <text x="80" y="418">1. 独占：拷贝在编译期被拒绝 —— 出现两个“唯一主人”是设计错误，直接报错而不是留到运行期崩溃</text>
+    <text x="80" y="448">2. 可移动：转移 = 偷指针 + 源置空，全程零分配；想转出所有权，接口就用“按值接收 unique_ptr”明示</text>
+    <text x="80" y="478">3. moved-from 状态保证为 null：比一般类型的“有效但未指定”更强，可用 if (p) 无痛检查（Day 1 自测题 1 的加强版）</text>
+  </g>
+</svg>

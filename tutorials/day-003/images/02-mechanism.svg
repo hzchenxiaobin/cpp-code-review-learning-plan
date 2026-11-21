@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="14" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">拷贝 vs 移动：到底搬了什么</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">同一个 Buffer 类，两种构造函数的代价天差地别</text>
+
+  <!-- 面板 A：拷贝 -->
+  <rect x="30" y="100" width="900" height="180" rx="12" fill="#f7f9f5" stroke="#7fa66a" stroke-width="2" filter="url(#rough)"/>
+  <text x="55" y="128" font-size="15" font-weight="700" fill="#5c7a4e">A · 拷贝构造：深复制（贵）</text>
+  <g filter="url(#rough)">
+    <rect x="60" y="146" width="180" height="52" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2.2"/>
+    <rect x="640" y="146" width="180" height="52" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2.2"/>
+    <rect x="110" y="224" width="80" height="34" rx="6" fill="#dcebf7" stroke="#5b8db8" stroke-width="2"/>
+    <rect x="690" y="224" width="80" height="34" rx="6" fill="#dcebf7" stroke="#5b8db8" stroke-width="2"/>
+  </g>
+  <text x="150" y="168" text-anchor="middle" font-size="13.5">源对象 A</text>
+  <text x="150" y="187" text-anchor="middle" font-size="12.5" fill="#2f5d8a">data_ → 0x1000</text>
+  <text x="730" y="168" text-anchor="middle" font-size="13.5">新对象 B</text>
+  <text x="730" y="187" text-anchor="middle" font-size="12.5" fill="#2f5d8a">data_ → 0x2000 新分配</text>
+  <line x1="150" y1="198" x2="152" y2="222" stroke="#5b8db8" stroke-width="2.2" marker-end="url(#arr)"/>
+  <line x1="730" y1="198" x2="728" y2="222" stroke="#5b8db8" stroke-width="2.2" marker-end="url(#arr)"/>
+  <line x1="245" y1="172" x2="636" y2="172" stroke="#4a4943" stroke-width="2.2" marker-end="url(#arr)"/>
+  <text x="440" y="160" text-anchor="middle" font-size="12.5" fill="#3f3e38">new int[8] + 逐字节复制内容</text>
+  <text x="440" y="243" text-anchor="middle" font-size="12.5" fill="#7a796f">两块内存、两个主人，互不影响（安全但贵）</text>
+
+  <!-- 面板 B：移动 -->
+  <rect x="30" y="300" width="900" height="180" rx="12" fill="#fdf6f4" stroke="#cf6a5a" stroke-width="2" filter="url(#rough)"/>
+  <text x="55" y="328" font-size="15" font-weight="700" fill="#b3544a">B · 移动构造：偷指针（便宜）</text>
+  <g filter="url(#rough)">
+    <rect x="60" y="346" width="180" height="52" rx="9" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2.2"/>
+    <rect x="640" y="346" width="180" height="52" rx="9" fill="#fffdf6" stroke="#cf6a5a" stroke-width="2.6"/>
+    <rect x="690" y="424" width="80" height="34" rx="6" fill="#f9e3de" stroke="#cf6a5a" stroke-width="2"/>
+  </g>
+  <text x="150" y="368" text-anchor="middle" font-size="13.5" fill="#7a796f">源对象 A（被掏空）</text>
+  <text x="150" y="387" text-anchor="middle" font-size="12.5" fill="#8f4a3e">data_ = nullptr</text>
+  <text x="730" y="368" text-anchor="middle" font-size="13.5">新对象 B</text>
+  <text x="730" y="387" text-anchor="middle" font-size="12.5" fill="#8f4a3e">data_ → 0x1000 原地址！</text>
+  <line x1="730" y1="398" x2="730" y2="422" stroke="#cf6a5a" stroke-width="2.2" marker-end="url(#arr)"/>
+  <line x1="245" y1="372" x2="636" y2="372" stroke="#4a4943" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#arr)"/>
+  <text x="440" y="360" text-anchor="middle" font-size="12.5" fill="#3f3e38">只搬一个指针（几个字节），零分配</text>
+  <text x="440" y="443" text-anchor="middle" font-size="12.5" fill="#7a796f">内存没动，只是“主人”换了人 —— 析构责任随之转移</text>
+
+  <rect x="30" y="494" width="900" height="36" rx="8" fill="#fbeedd" stroke="#e09552" stroke-width="2" filter="url(#rough)"/>
+  <text x="480" y="518" text-anchor="middle" font-size="14" fill="#3f3e38">std::move(x) 本身什么都不搬：它只是贴上“可以搬走”的标签；const 对象贴了标签也搬不动 → 静默退回拷贝</text>
+</svg>
