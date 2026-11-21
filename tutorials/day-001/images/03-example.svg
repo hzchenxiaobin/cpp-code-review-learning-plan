@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="23" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="500" fill="#fffdf6"/>
+
+  <text x="480" y="50" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">把编译器当作第一位 reviewer</text>
+  <text x="480" y="76" text-anchor="middle" font-size="15" fill="#7a796f">warning_demo.cpp：程序「能跑」≠「没问题」</text>
+
+  <!-- 左：有告警的代码 -->
+  <rect x="45" y="102" width="395" height="268" rx="12" fill="#fdf6e3" stroke="#cf6a5a" stroke-width="2.6" filter="url(#rough)"/>
+  <text x="68" y="133" font-size="15" font-weight="700" fill="#b3544a">warning_demo.cpp —— 2 条告警</text>
+  <g font-size="14.5" fill="#3f3e38">
+    <text x="68" y="168">vector&lt;int&gt; v{1, 2, 3};</text>
+    <text x="68" y="196">int unused = 42;</text>
+    <text x="404" y="196" font-weight="700" fill="#cf6a5a">← ①</text>
+    <text x="68" y="224">int n = 0;</text>
+    <text x="68" y="252">if (n &lt; v.size()) {</text>
+    <text x="404" y="252" font-weight="700" fill="#cf6a5a">← ②</text>
+    <text x="68" y="280">    cout &lt;&lt; v.size();</text>
+    <text x="68" y="308">}</text>
+  </g>
+  <text x="68" y="345" font-size="13" fill="#7a796f">编译能过、运行正常，</text>
+  <text x="68" y="363" font-size="13" fill="#7a796f">但 reviewer 一眼就能挑出两个问题</text>
+
+  <!-- 右：修复后的代码 -->
+  <rect x="520" y="102" width="395" height="268" rx="12" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.6" filter="url(#rough)"/>
+  <text x="543" y="133" font-size="15" font-weight="700" fill="#5c7a4e">warning_demo_fixed.cpp —— 0 告警</text>
+  <g font-size="14.5" fill="#3f3e38">
+    <text x="543" y="168">vector&lt;int&gt; v{1, 2, 3};</text>
+    <text x="543" y="196" font-size="13.5" fill="#7a796f">// 修复①：删掉用不上的 unused</text>
+    <text x="543" y="224">if (v.size() &gt; 0) { ... }</text>
+    <text x="543" y="252" font-size="13.5" fill="#7a796f">// 修复②：不再拿 int 和 size_t 比</text>
+    <text x="543" y="280">if (!v.empty())</text>
+    <text x="543" y="308">    for (int x : v) ...</text>
+  </g>
+  <g filter="url(#rough)">
+    <circle cx="876" cy="120" r="15" fill="#7fa66a" stroke="#3f3e38" stroke-width="2"/>
+  </g>
+  <text x="876" y="126" text-anchor="middle" font-size="17" font-weight="700" fill="#fffdf6">✓</text>
+  <text x="543" y="345" font-size="13" fill="#5c7a4e">加上 -Werror 也编译通过，</text>
+  <text x="543" y="363" font-size="13" fill="#5c7a4e">这才是能过 review 的起点</text>
+
+  <!-- 中间大箭头 -->
+  <line x1="447" y1="236" x2="513" y2="236" stroke="#4a4943" stroke-width="4" marker-end="url(#arr)"/>
+  <text x="480" y="222" text-anchor="middle" font-size="14" fill="#3f3e38">review + 修复</text>
+
+  <!-- 底部：两条真实告警 -->
+  <rect x="45" y="398" width="440" height="56" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="68" y="421" font-size="14" font-weight="700" fill="#a3663a">① [-Wunused-variable]</text>
+  <text x="68" y="443" font-size="13.5" fill="#3f3e38">定义了却从未使用 —— 死代码，review 必问</text>
+
+  <rect x="515" y="398" width="400" height="56" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="538" y="421" font-size="14" font-weight="700" fill="#a3663a">② [-Wsign-compare]</text>
+  <text x="538" y="443" font-size="13.5" fill="#3f3e38">int vs size_t —— 无符号陷阱的种子</text>
+</svg>

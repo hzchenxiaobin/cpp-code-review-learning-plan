@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="500" fill="#fffdf6"/>
+
+  <text x="480" y="50" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">每日学习闭环：三段式节奏 × 两个常备文件</text>
+  <text x="480" y="76" text-anchor="middle" font-size="15" fill="#7a796f">每天 60–90 分钟，雷打不动的循环</text>
+
+  <!-- 左侧：三段式循环 -->
+  <g filter="url(#rough)">
+    <rect x="60" y="112" width="180" height="80" rx="12" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.5"/>
+    <rect x="270" y="230" width="180" height="80" rx="12" fill="#fbeedd" stroke="#e09552" stroke-width="2.5"/>
+    <rect x="60" y="348" width="180" height="80" rx="12" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.5"/>
+  </g>
+  <g text-anchor="middle" fill="#3f3e38">
+    <text x="150" y="143" font-size="17" font-weight="700">输入 30 min</text>
+    <text x="150" y="166" font-size="13">读书 / 文档 /</text>
+    <text x="150" y="184" font-size="13">高手的 review 评论</text>
+
+    <text x="360" y="261" font-size="17" font-weight="700">练习 40 min</text>
+    <text x="360" y="284" font-size="13">写反例 / 限时找 bug</text>
+    <text x="360" y="302" font-size="13">盲审真实 diff</text>
+
+    <text x="150" y="379" font-size="17" font-weight="700">记录 10–20 min</text>
+    <text x="150" y="402" font-size="13">更新 checklist /</text>
+    <text x="150" y="420" font-size="13">写 review 日记</text>
+  </g>
+
+  <!-- 循环箭头：输入→练习→记录→输入 -->
+  <g stroke="#4a4943" stroke-width="2.2" fill="none" marker-end="url(#arr)">
+    <path d="M 245 155 Q 300 175 315 226"/>
+    <path d="M 268 292 Q 240 320 202 344"/>
+    <path d="M 150 344 Q 138 300 142 198"/>
+  </g>
+  <text x="297" y="168" font-size="12.5" fill="#7a796f">带着问题读</text>
+  <text x="231" y="333" font-size="12.5" fill="#7a796f">漏了什么？</text>
+  <text x="66" y="272" font-size="12.5" fill="#7a796f">先扫清单</text>
+
+  <!-- 右侧：两个常备文件 -->
+  <g filter="url(#rough)">
+    <rect x="530" y="100" width="390" height="150" rx="12" fill="#fffdf6" stroke="#7fa66a" stroke-width="2.6"/>
+    <rect x="530" y="300" width="390" height="150" rx="12" fill="#fffdf6" stroke="#cf6a5a" stroke-width="2.6"/>
+  </g>
+  <g fill="#3f3e38">
+    <text x="555" y="133" font-size="16" font-weight="700" fill="#5c7a4e">my-review-checklist.md</text>
+    <text x="555" y="163" font-size="14">· 每发现一个新 bug 模式 → +1 条</text>
+    <text x="555" y="188" font-size="14">· 从 v0.1 一路长到 v3.0（≥100 条）</text>
+    <text x="555" y="213" font-size="14">· 练习前扫一遍 = 带着雷达上场</text>
+
+    <text x="555" y="333" font-size="16" font-weight="700" fill="#b3544a">review-diary.md</text>
+    <text x="555" y="363" font-size="14">· 今天审了什么、花了多久</text>
+    <text x="555" y="388" font-size="14">· 漏了什么，为什么会漏</text>
+    <text x="555" y="413" font-size="14">· 沟通效果 / 意见被采纳率</text>
+  </g>
+
+  <!-- 联动箭头 -->
+  <g stroke="#4a4943" stroke-width="2.2" fill="none" marker-end="url(#arr)">
+    <path d="M 452 296 C 505 310 495 368 526 374"/>
+    <path d="M 242 366 C 400 335 390 190 526 178"/>
+  </g>
+  <g stroke="#5b8db8" stroke-width="2.2" fill="none" stroke-dasharray="6 5" marker-end="url(#arr)">
+    <path d="M 534 116 C 430 55 330 68 250 104"/>
+  </g>
+  <text x="478" y="297" font-size="12.5" fill="#7a796f">今天漏了什么</text>
+  <text x="378" y="243" font-size="12.5" fill="#7a796f">新 bug 模式 +1</text>
+  <text x="372" y="74" font-size="12.5" fill="#5b8db8">反哺：先扫清单再练</text>
+
+  <text x="480" y="488" text-anchor="middle" font-size="15" font-style="italic" fill="#7a796f">checklist 是复利，diary 是镜子 —— 120 天后你最值钱的两个文件</text>
+</svg>
