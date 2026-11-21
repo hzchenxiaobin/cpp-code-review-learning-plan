@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="18" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">noexcept 的分量：vector 扩容决策树</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">一个 noexcept 关键字，决定扩容时偷指针还是深拷贝</text>
+
+  <!-- 决策树 -->
+  <g filter="url(#rough)">
+    <rect x="330" y="100" width="300" height="52" rx="10" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.6"/>
+  </g>
+  <text x="480" y="132" text-anchor="middle" font-size="15" font-weight="700">vector 扩容：旧元素搬进新内存</text>
+
+  <g filter="url(#rough)">
+    <rect x="120" y="206" width="330" height="56" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.4"/>
+    <rect x="560" y="206" width="330" height="56" rx="10" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.4"/>
+  </g>
+  <text x="285" y="230" text-anchor="middle" font-size="14" font-weight="700" fill="#5c7a4e">移动构造标了 noexcept？</text>
+  <text x="285" y="250" text-anchor="middle" font-size="12.5" fill="#5c897f">是 → 放心地偷指针</text>
+  <text x="725" y="230" text-anchor="middle" font-size="14" font-weight="700" fill="#b3544a">没标 noexcept？</text>
+  <text x="725" y="250" text-anchor="middle" font-size="12.5" fill="#8f4a3e">偷到一半抛异常怎么办！</text>
+  <g stroke="#4a4943" stroke-width="2.2" fill="none" marker-end="url(#arr)">
+    <path d="M 420 152 L 300 202"/>
+    <path d="M 540 152 L 660 202"/>
+  </g>
+
+  <!-- Risky 分支展开 -->
+  <g filter="url(#rough)">
+    <rect x="500" y="300" width="200" height="50" rx="10" fill="#fdf6e3" stroke="#e09552" stroke-width="2.2"/>
+    <rect x="740" y="300" width="180" height="50" rx="10" fill="#fdf6e3" stroke="#e09552" stroke-width="2.2"/>
+  </g>
+  <text x="600" y="322" text-anchor="middle" font-size="13.5">类型可拷贝？</text>
+  <text x="600" y="340" text-anchor="middle" font-size="12.5" fill="#a3663a">是 → 退回深拷贝</text>
+  <text x="830" y="322" text-anchor="middle" font-size="13.5">不可拷贝？</text>
+  <text x="830" y="340" text-anchor="middle" font-size="12.5" fill="#a3663a">硬着头皮移动</text>
+  <g stroke="#4a4943" stroke-width="2.2" fill="none" marker-end="url(#arr)">
+    <line x1="680" y1="262" x2="596" y2="296"/>
+    <line x1="780" y1="262" x2="824" y2="296"/>
+  </g>
+
+  <!-- 实测战报 -->
+  <g filter="url(#rough)">
+    <rect x="70" y="380" width="380" height="64" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.4"/>
+    <rect x="510" y="380" width="380" height="64" rx="10" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.4"/>
+  </g>
+  <text x="260" y="408" text-anchor="middle" font-size="14" font-weight="700" fill="#5c7a4e">SafeBuf 实测：moves=2，copies=0</text>
+  <text x="260" y="430" text-anchor="middle" font-size="12.5" fill="#7a796f">3 个元素触发扩容，2 个旧元素全走移动</text>
+  <text x="700" y="408" text-anchor="middle" font-size="14" font-weight="700" fill="#b3544a">RiskyBuf 实测：moves=0，copies=2</text>
+  <text x="700" y="430" text-anchor="middle" font-size="12.5" fill="#7a796f">同样的扩容，全退回深拷贝（白写了移动）</text>
+
+  <!-- 底部原理 -->
+  <rect x="45" y="464" width="870" height="56" rx="10" fill="#eef4fa" fill-opacity="0.6" stroke="#5b8db8" stroke-width="2" stroke-dasharray="7 5" filter="url(#rough)"/>
+  <text x="480" y="488" text-anchor="middle" font-size="14.5" fill="#3f3e38">为什么这么设计：vector 想给扩容留“强异常保证”——偷到第 3 个元素时抛了，前 2 个已被掏空，回不去了</text>
+  <text x="480" y="510" text-anchor="middle" font-size="13" fill="#7a796f">review 规则：资源类的移动构造/赋值应标 noexcept（不抛的偷指针本就该承诺不抛）</text>
+</svg>

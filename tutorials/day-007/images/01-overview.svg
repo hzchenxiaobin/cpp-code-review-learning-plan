@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="460" viewBox="0 0 960 460" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="10" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="460" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">Day 7 · 移动语义腹地：源对象去哪了</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">阶段 0 · 第 2 周 ｜ 对应《Effective Modern C++》条款 23–25</text>
+
+  <!-- 第 2 周进度条 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="94" width="155" height="56" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.2"/>
+    <rect x="225" y="94" width="155" height="56" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="3.2"/>
+    <rect x="405" y="94" width="155" height="56" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+    <rect x="585" y="94" width="155" height="56" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+    <rect x="765" y="94" width="150" height="56" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="122" y="117" font-size="13.5" font-weight="700" fill="#5c7a4e">Day 6 ✓</text>
+    <text x="122" y="138" font-size="12" fill="#7a796f">值类别</text>
+    <text x="302" y="117" font-size="13.5" font-weight="700" fill="#c07a3e">Day 7 · 今天</text>
+    <text x="302" y="138" font-size="12">移动语义深入</text>
+    <text x="482" y="117" font-size="13.5">Day 8</text>
+    <text x="482" y="138" font-size="12" fill="#7a796f">完美转发</text>
+    <text x="662" y="117" font-size="13.5">Day 9</text>
+    <text x="662" y="138" font-size="12" fill="#7a796f">const/constexpr</text>
+    <text x="840" y="117" font-size="13.5">Day 10</text>
+    <text x="840" y="138" font-size="12" fill="#7a796f">异常安全/M0</text>
+  </g>
+
+  <!-- 中心问题 -->
+  <g filter="url(#rough)">
+    <rect x="230" y="180" width="500" height="54" rx="12" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.6"/>
+  </g>
+  <text x="480" y="213" text-anchor="middle" font-size="17" font-weight="700" fill="#3f3e38">核心问题：auto b = std::move(a); 之后，a 是什么？</text>
+
+  <!-- 三张主题卡 -->
+  <g stroke="#4a4943" stroke-width="2" fill="none" marker-end="url(#arr)">
+    <path d="M 380 234 L 200 268"/>
+    <path d="M 480 234 L 480 268"/>
+    <path d="M 580 234 L 760 268"/>
+  </g>
+  <g filter="url(#rough)">
+    <rect x="70" y="274" width="260" height="120" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.4"/>
+    <rect x="350" y="274" width="260" height="120" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.4"/>
+    <rect x="630" y="274" width="260" height="120" rx="10" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.4"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="200" y="302" font-size="14.5" font-weight="700" fill="#5c7a4e">moved-from 状态</text>
+    <text x="200" y="328" font-size="12.5">“有效但未指定”</text>
+    <text x="200" y="350" font-size="12.5">无前置条件操作合法</text>
+    <text x="200" y="372" font-size="12.5" fill="#7a796f">赋新值可复活（实测）</text>
+    <text x="480" y="302" font-size="14.5" font-weight="700" fill="#c07a3e">自赋值防护</text>
+    <text x="480" y="328" font-size="12.5">b = std::move(b) 会怎样？</text>
+    <text x="480" y="350" font-size="12.5">有防线：安然无恙</text>
+    <text x="480" y="372" font-size="12.5" fill="#8f4a3e">无防线：静默清空（实测）</text>
+    <text x="760" y="302" font-size="14.5" font-weight="700" fill="#b3544a">noexcept 的分量</text>
+    <text x="760" y="328" font-size="12.5">vector 扩容搬元素时：</text>
+    <text x="760" y="350" font-size="12.5">移动 noexcept → 偷指针</text>
+    <text x="760" y="372" font-size="12.5" fill="#8f4a3e">没标 → 退回深拷贝（实测）</text>
+  </g>
+
+  <rect x="45" y="410" width="870" height="40" rx="10" fill="#eef4fa" fill-opacity="0.6" stroke="#5b8db8" stroke-width="2" stroke-dasharray="7 5" filter="url(#rough)"/>
+  <text x="480" y="436" text-anchor="middle" font-size="14.5" fill="#3f3e38">今日实测链：观察 moved-from → 裸调 std::move 证明“只是贴标签” → 自赋值两版对照 → 扩容战报</text>
+</svg>

@@ -2,7 +2,7 @@
 
 按 [skills/cpp-code-review-daily-tutorial/SKILL.md](../skills/cpp-code-review-daily-tutorial/SKILL.md) 规范，把 [主计划](../README.md) 逐日展开为可独立学习的图文教程。
 
-**进度：6 / 120 天**（阶段 0：6/10）
+**进度：7 / 120 天**（阶段 0：7/10）
 
 | 教程 | 主题 | 阶段 | 状态 |
 |---|---|---|---|
@@ -12,8 +12,9 @@
 | [Day 4](day-004/README.md) | shared_ptr / weak_ptr：共享所有权与循环引用 | 0 · 语言基础 | ✅ 已发布 |
 | [Day 5](day-005/README.md) | 第一周综合复盘：mini 项目 + 7-bug 找茬演练 + checklist v0.1 | 0 · 语言基础 | ✅ 已发布 |
 | [Day 6](day-006/README.md) | 值类别与 decltype：每个表达式都有身份 | 0 · 语言基础 | ✅ 已发布 |
-| Day 7 | 移动语义深入（moved-from、自赋值、noexcept） | 0 · 语言基础 | ⏳ 待生成 |
-| Day 8–120 | 随主计划逐日展开 | — | ⏳ 待生成 |
+| [Day 7](day-007/README.md) | 移动语义深入：moved-from、自赋值与 noexcept | 0 · 语言基础 | ✅ 已发布 |
+| Day 8 | 完美转发（std::forward、引用折叠） | 0 · 语言基础 | ⏳ 待生成 |
+| Day 9–120 | 随主计划逐日展开 | — | ⏳ 待生成 |
 
 > 每篇教程包含：导语 → 前置补给 → 概念讲解（配图）→ 检视演练 → 工具验证 → 常见错误与误判 → 练习与验收清单 → 总结。
 > 示例代码在教程写作环境中实际编译运行过，文中标注的"实测输出"为真实记录。

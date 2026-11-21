@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="31" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">实测三联：贴标签 · 自赋值 · 扩容战报</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">今天的真实运行记录（含两条“意外收获”的编译器行为）</text>
+
+  <!-- ① std::move 只是贴标签 -->
+  <rect x="45" y="100" width="290" height="230" rx="12" fill="#fdf6e3" stroke="#e09552" stroke-width="2.4" filter="url(#rough)"/>
+  <text x="68" y="128" font-size="14.5" font-weight="700" fill="#a3663a">① std::move 只是转换（实测）</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="68" y="158">Buf w("w", 8);</text>
+    <text x="68" y="184">std::move(w);   // 没人接收</text>
+    <text x="68" y="210">→ w.size() = 8（完好！）</text>
+    <text x="68" y="236">auto&amp;&amp; r = std::move(w);</text>
+    <text x="68" y="262">→ w.size() = 8（仍完好）</text>
+    <text x="68" y="296" fill="#5c7a4e" font-weight="700">意外收获：clang 21 给 std::move</text>
+    <text x="68" y="316" fill="#5c7a4e" font-weight="700">标了 [[nodiscard]]，裸调用直接</text>
+    <text x="68" y="336" fill="#5c7a4e">warning：[-Wunused-result]</text>
+  </g>
+
+  <!-- ② 自赋值对照 -->
+  <rect x="355" y="100" width="290" height="230" rx="12" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.4" filter="url(#rough)"/>
+  <text x="378" y="128" font-size="14.5" font-weight="700" fill="#5c7a4e">② b = std::move(b) 两版对照</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="378" y="158" font-weight="700" fill="#5c7a4e">有防线（if (this != &amp;o)）：</text>
+    <text x="378" y="182">size 仍 4，data_ 与之前相同</text>
+    <text x="378" y="208" font-weight="700" fill="#b3544a">无防线（反面教材实测）：</text>
+    <text x="378" y="232">size=0，data_=0x0</text>
+    <text x="378" y="256">→ 4 个元素不翼而飞，</text>
+    <text x="378" y="276">　 无崩溃无报错（静默丢失）</text>
+    <text x="378" y="306" fill="#5c7a4e">意外收获：-Wself-move 能抓</text>
+    <text x="378" y="326" fill="#5c7a4e">“同一变量”的自移动；但</text>
+    <text x="378" y="336" fill="#7a796f">a[i]=move(a[j]) 运行期才知道</text>
+  </g>
+
+  <!-- ③ 扩容战报 -->
+  <rect x="665" y="100" width="250" height="230" rx="12" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.4" filter="url(#rough)"/>
+  <text x="688" y="128" font-size="14.5" font-weight="700" fill="#b3544a">③ 扩容战报（实测）</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="688" y="158">reserve(2) 后放第 3 个：</text>
+    <text x="688" y="188" font-weight="700" fill="#5c7a4e">SafeBuf（noexcept）</text>
+    <text x="688" y="210">moves=2 copies=0</text>
+    <text x="688" y="240" font-weight="700" fill="#b3544a">RiskyBuf（未标）</text>
+    <text x="688" y="262">moves=0 copies=2</text>
+    <text x="688" y="296">差别只在一个关键字，</text>
+    <text x="688" y="316">代价是整段深拷贝</text>
+  </g>
+
+  <!-- 底部：结论卡 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="356" width="870" height="160" rx="12" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.4"/>
+  </g>
+  <text x="480" y="386" text-anchor="middle" font-size="15.5" font-weight="700" fill="#2f5d8a">写进 checklist 的移动语义结论卡</text>
+  <g font-size="14" fill="#3f3e38">
+    <text x="80" y="418">1. moved-from = “有效但未指定”：无前置条件操作（empty/size/clear）合法；赋新值即复活；禁止假设旧内容</text>
+    <text x="80" y="448">2. std::move 只是贴标签：没人接收 = 什么都没发生；资源类的移动构造/赋值应标 noexcept，否则扩容退回拷贝</text>
+    <text x="80" y="478">3. 自赋值防线不可省：if (this != &amp;o)；-Wself-move 只能抓同变量的字面自移动，运行期路径仍靠防线</text>
+    <text x="80" y="504" font-size="13" fill="#7a796f">附：有些类型天生不该移动——lock_guard（0）vs unique_lock（1），用 static_assert 锁住设计意图（实测通过）</text>
+  </g>
+</svg>
