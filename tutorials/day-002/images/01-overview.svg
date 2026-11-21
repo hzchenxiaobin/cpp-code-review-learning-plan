@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="460" viewBox="0 0 960 460" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="5" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="460" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">Day 2 · RAII：C++ 资源管理的祖师爷</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">阶段 0 · 第 1 周 ｜ 对应《Effective C++》条款 13</text>
+
+  <!-- 第 1 周进度条 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="96" width="155" height="60" rx="10" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.2"/>
+    <rect x="225" y="96" width="155" height="60" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="3.2"/>
+    <rect x="405" y="96" width="155" height="60" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+    <rect x="585" y="96" width="155" height="60" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+    <rect x="765" y="96" width="150" height="60" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+  </g>
+  <g text-anchor="middle" fill="#3f3e38">
+    <text x="122" y="121" font-size="14" font-weight="700" fill="#5c7a4e">Day 1 ✓</text>
+    <text x="122" y="142" font-size="12.5">环境与摸底</text>
+    <text x="302" y="121" font-size="14" font-weight="700" fill="#c07a3e">Day 2 · 今天</text>
+    <text x="302" y="142" font-size="12.5">RAII 与 FileGuard</text>
+    <text x="482" y="121" font-size="14">Day 3</text>
+    <text x="482" y="142" font-size="12.5" fill="#7a796f">unique_ptr</text>
+    <text x="662" y="121" font-size="14">Day 4</text>
+    <text x="662" y="142" font-size="12.5" fill="#7a796f">shared/weak_ptr</text>
+    <text x="840" y="121" font-size="14">Day 5</text>
+    <text x="840" y="142" font-size="12.5" fill="#7a796f">综合复盘</text>
+  </g>
+
+  <!-- RAII 家族树 -->
+  <g filter="url(#rough)">
+    <rect x="310" y="196" width="340" height="66" rx="12" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.8"/>
+  </g>
+  <text x="480" y="224" text-anchor="middle" font-size="16.5" font-weight="700" fill="#3f3e38">RAII 模式</text>
+  <text x="480" y="248" text-anchor="middle" font-size="13.5" fill="#3f3e38">资源获取 = 对象构造 ｜ 资源释放 = 对象析构</text>
+
+  <g stroke="#8a897f" stroke-width="2" fill="none">
+    <path d="M 480 262 L 480 280"/>
+    <path d="M 165 280 L 795 280"/>
+    <path d="M 165 280 L 165 296"/>
+    <path d="M 375 280 L 375 296"/>
+    <path d="M 585 280 L 585 296"/>
+    <path d="M 795 280 L 795 296"/>
+  </g>
+
+  <g filter="url(#rough)">
+    <rect x="65" y="296" width="200" height="70" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.8"/>
+    <rect x="275" y="296" width="200" height="70" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+    <rect x="485" y="296" width="200" height="70" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+    <rect x="695" y="296" width="200" height="70" rx="10" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="165" y="322" font-size="14.5" font-weight="700" fill="#3f3e38">FileGuard（文件）</text>
+    <text x="165" y="345" font-size="12.5" fill="#c07a3e">今天亲手实现 ★</text>
+    <text x="375" y="322" font-size="14.5">unique_ptr（内存）</text>
+    <text x="375" y="345" font-size="12.5" fill="#7a796f">Day 3</text>
+    <text x="585" y="322" font-size="14.5">lock_guard（锁）</text>
+    <text x="585" y="345" font-size="12.5" fill="#7a796f">Day 37 · 并发周</text>
+    <text x="795" y="322" font-size="14.5">jthread（线程）</text>
+    <text x="795" y="345" font-size="12.5" fill="#7a796f">Day 36 · 并发周</text>
+  </g>
+
+  <rect x="45" y="396" width="870" height="46" rx="10" fill="#eef4fa" fill-opacity="0.6" stroke="#5b8db8" stroke-width="2" stroke-dasharray="7 5" filter="url(#rough)"/>
+  <text x="480" y="425" text-anchor="middle" font-size="15" fill="#3f3e38">今日验证链：见识裸管理的翻车现场 → 实现 FileGuard → 异常路径实测“数据不丢、计数归零”</text>
+</svg>

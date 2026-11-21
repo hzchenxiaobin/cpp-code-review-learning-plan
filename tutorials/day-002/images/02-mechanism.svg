@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">栈展开（stack unwinding）：析构函数为什么逃不掉</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">异常不是“跳过”代码，而是反向逐层拆除局部对象</text>
+
+  <!-- 面板 A：正常路径 -->
+  <rect x="30" y="100" width="900" height="150" rx="12" fill="#f7fbf5" stroke="#7fa66a" stroke-width="2" filter="url(#rough)"/>
+  <text x="55" y="128" font-size="15" font-weight="700" fill="#5c7a4e">A · 正常路径</text>
+  <g filter="url(#rough)">
+    <rect x="55" y="142" width="118" height="44" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2"/>
+    <rect x="205" y="142" width="118" height="44" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2"/>
+    <rect x="355" y="142" width="118" height="44" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2"/>
+    <rect x="505" y="142" width="118" height="44" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2"/>
+    <rect x="655" y="142" width="150" height="44" rx="9" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.6"/>
+  </g>
+  <g text-anchor="middle" font-size="13" fill="#3f3e38">
+    <text x="114" y="169">fopen 打开</text>
+    <text x="264" y="169">fputs 写入</text>
+    <text x="414" y="169">fputs 写入</text>
+    <text x="564" y="169">line3 总结</text>
+    <text x="730" y="169" font-weight="700" fill="#5c7a4e">fclose ✓ 手动</text>
+  </g>
+  <g stroke="#4a4943" stroke-width="2" marker-end="url(#arr)">
+    <line x1="175" y1="164" x2="202" y2="164"/>
+    <line x1="325" y1="164" x2="352" y2="164"/>
+    <line x1="475" y1="164" x2="502" y2="164"/>
+    <line x1="625" y1="164" x2="652" y2="164"/>
+    <line x1="807" y1="164" x2="850" y2="164"/>
+  </g>
+  <text x="872" y="169" font-size="13" fill="#5c7a4e">返回</text>
+  <g filter="url(#rough)">
+    <rect x="55" y="204" width="750" height="18" rx="6" fill="#dcebf7" stroke="#5b8db8" stroke-width="1.6"/>
+  </g>
+  <text x="430" y="218" text-anchor="middle" font-size="12.5" fill="#2f5d8a">FILE* 存活区间：从 fopen 到手动 fclose</text>
+
+  <!-- 面板 B：异常路径 -->
+  <rect x="30" y="272" width="900" height="192" rx="12" fill="#fdf6f4" stroke="#cf6a5a" stroke-width="2" filter="url(#rough)"/>
+  <text x="55" y="300" font-size="15" font-weight="700" fill="#b3544a">B · 异常路径（同一份 RAII 代码）</text>
+  <g filter="url(#rough)">
+    <rect x="55" y="314" width="118" height="44" rx="9" fill="#fffdf6" stroke="#cf6a5a" stroke-width="2"/>
+    <rect x="205" y="314" width="118" height="44" rx="9" fill="#fffdf6" stroke="#cf6a5a" stroke-width="2"/>
+    <rect x="355" y="314" width="128" height="44" rx="9" fill="#f9e3de" stroke="#cf6a5a" stroke-width="2.6"/>
+    <rect x="515" y="314" width="168" height="44" rx="9" fill="#fffdf6" stroke="#8a897f" stroke-width="2" stroke-dasharray="6 4"/>
+    <rect x="715" y="314" width="180" height="44" rx="9" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.6"/>
+  </g>
+  <g text-anchor="middle" font-size="13" fill="#3f3e38">
+    <text x="114" y="341">fopen 打开</text>
+    <text x="264" y="341">fputs 写入</text>
+    <text x="419" y="341" font-weight="700" fill="#b3544a">throw 抛出!</text>
+    <text x="599" y="341" fill="#5c5b52">栈展开：反向析构</text>
+    <text x="805" y="341" font-weight="700" fill="#5c7a4e">~FileGuard → fclose ✓</text>
+  </g>
+  <g stroke="#4a4943" stroke-width="2" marker-end="url(#arr)">
+    <line x1="175" y1="336" x2="202" y2="336"/>
+    <line x1="325" y1="336" x2="352" y2="336"/>
+    <line x1="485" y1="336" x2="512" y2="336"/>
+    <line x1="685" y1="336" x2="712" y2="336"/>
+  </g>
+  <polyline points="413,362 407,372 419,378 409,388" fill="none" stroke="#cf6a5a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="440" y="386" font-size="12.5" fill="#b3544a">异常向上飞，逐层“拆除”已构造的局部对象</text>
+  <g filter="url(#rough)">
+    <rect x="55" y="408" width="690" height="18" rx="6" fill="#f3ddd8" stroke="#cf6a5a" stroke-width="1.6"/>
+  </g>
+  <text x="400" y="422" text-anchor="middle" font-size="12.5" fill="#8f4a3e">FILE* 存活区间：同样精确闭合——只是“关闭”由析构函数自动完成</text>
+
+  <text x="480" y="510" text-anchor="middle" font-size="15" fill="#3f3e38">两条路径都保证 fclose —— 这就是《Effective C++》条款 13 的全部内核：把释放绑定到对象生命周期</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="17" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">实测对照：同一个场景，只差一个析构函数</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">已写入 line1+line2（共 40 字节）后抛出异常 —— 两版代码的真实表现</text>
+
+  <!-- 左：C 风格 -->
+  <rect x="45" y="100" width="420" height="248" rx="12" fill="#fdf6e3" stroke="#cf6a5a" stroke-width="2.6" filter="url(#rough)"/>
+  <text x="68" y="130" font-size="15" font-weight="700" fill="#b3544a">leaky_report.cpp（C 风格）</text>
+  <g font-size="13.5" fill="#3f3e38">
+    <text x="68" y="160">FILE* f = fopen(...);</text>
+    <text x="68" y="184">fputs(...); fputs(...);</text>
+    <text x="68" y="208">throw 数据异常;  ← fclose 被绕过</text>
+  </g>
+  <g font-size="13.5">
+    <text x="68" y="244" fill="#b3544a">✗ 进程内重读：空（数据滞留 stdio 缓冲区）</text>
+    <text x="68" y="270" fill="#b3544a">✗ FILE* 句柄泄漏至进程结束</text>
+    <text x="68" y="296" fill="#a3663a">△ 退出后竟有 40 字节：exit() 兜底 flush，掩盖了 bug</text>
+    <text x="68" y="322" fill="#7a796f">（另：长生命周期进程中 fd 一直被占着）</text>
+  </g>
+
+  <!-- 右：RAII -->
+  <rect x="495" y="100" width="420" height="248" rx="12" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.6" filter="url(#rough)"/>
+  <text x="518" y="130" font-size="15" font-weight="700" fill="#5c7a4e">file_guard.cpp（RAII）</text>
+  <g font-size="13.5" fill="#3f3e38">
+    <text x="518" y="160">FileGuard f(path, "w");</text>
+    <text x="518" y="184">fputs(...); fputs(...);</text>
+    <text x="518" y="208">throw 数据异常;  ← 析构自动 fclose</text>
+  </g>
+  <g font-size="13.5">
+    <text x="518" y="244" fill="#5c7a4e">✓ 进程内重读：有内容（确定性落盘）</text>
+    <text x="518" y="270" fill="#5c7a4e">✓ 句柄在作用域结束即刻释放</text>
+    <text x="518" y="296" fill="#5c7a4e">✓ 不依赖任何平台兜底行为</text>
+    <text x="518" y="322" fill="#7a796f">（异常路径与正常路径行为一致）</text>
+  </g>
+
+  <line x1="468" y1="224" x2="492" y2="224" stroke="#4a4943" stroke-width="4" marker-end="url(#arr)"/>
+  <text x="480" y="206" text-anchor="middle" font-size="13" fill="#3f3e38">只差一个析构函数</text>
+
+  <!-- 底部：两组深挖实测 -->
+  <rect x="45" y="372" width="420" height="130" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="68" y="400" font-size="14.5" font-weight="700" fill="#a3663a">补充实验：死亡方式决定数据命运（macOS 实测）</text>
+  <g font-size="13" fill="#3f3e38">
+    <text x="68" y="428">abort() 后：21 字节仍在（macOS 会 flush，</text>
+    <text x="68" y="450">　Linux/glibc 不会 —— 行为不可移植！）</text>
+    <text x="68" y="478">SIGKILL 后：0 字节（崩溃/OOM 场景，真正丢失）</text>
+  </g>
+
+  <rect x="495" y="372" width="420" height="130" rx="10" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.2" filter="url(#rough)"/>
+  <text x="518" y="400" font-size="14.5" font-weight="700" fill="#2f5d8a">Tracer 计数实测（guard_variants.cpp）</text>
+  <g font-size="13" fill="#3f3e38">
+    <text x="518" y="428">正常路径 alive：0→1→2→1→2→1→0 ✓ 全释放</text>
+    <text x="518" y="452">异常路径 alive：0→1→2→1→0 ✓（socketC 未创建）</text>
+    <text x="518" y="478">构造数 = 析构数，异常也无法打破平衡</text>
+  </g>
+
+  <text x="480" y="528" text-anchor="middle" font-size="15" font-style="italic" fill="#7a796f">review 直觉：「能跑」与「正确」之间，隔着所有异常路径</text>
+</svg>
