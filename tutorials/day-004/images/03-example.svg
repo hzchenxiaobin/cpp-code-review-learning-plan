@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="19" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">循环引用现场：事故版 vs 修复版</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">cycle_leak.cpp 的真实运行结果（alive 计数为证）</text>
+
+  <!-- 左：事故版 -->
+  <rect x="45" y="100" width="430" height="270" rx="12" fill="#f9e9e5" stroke="#cf6a5a" stroke-width="2.6" filter="url(#rough)"/>
+  <text x="68" y="130" font-size="15" font-weight="700" fill="#b3544a">事故版：双向都是强引用</text>
+  <g filter="url(#rough)">
+    <rect x="90" y="160" width="150" height="56" rx="9" fill="#fffdf6" stroke="#cf6a5a" stroke-width="2.4"/>
+    <rect x="290" y="160" width="150" height="56" rx="9" fill="#fffdf6" stroke="#cf6a5a" stroke-width="2.4"/>
+  </g>
+  <text x="165" y="184" text-anchor="middle" font-size="14">BadParent</text>
+  <text x="165" y="204" text-anchor="middle" font-size="12" fill="#8f4a3e">kids: shared_ptr</text>
+  <text x="365" y="184" text-anchor="middle" font-size="14">BadChild</text>
+  <text x="365" y="204" text-anchor="middle" font-size="12" fill="#8f4a3e">up: shared_ptr</text>
+  <g stroke="#cf6a5a" stroke-width="2.8" fill="none" marker-end="url(#arr)">
+    <line x1="243" y1="176" x2="287" y2="176"/>
+    <line x1="287" y1="204" x2="243" y2="204"/>
+  </g>
+  <text x="265" y="240" text-anchor="middle" font-size="13" font-weight="700" fill="#b3544a">环！</text>
+  <g font-size="13" fill="#3f3e38">
+    <text x="68" y="268">作用域结束后：</text>
+    <text x="68" y="294" fill="#b3544a" font-weight="700">· 析构日志：一行都没有</text>
+    <text x="68" y="320" fill="#b3544a">· 存活 = 2（计数各剩 1，永不归零）</text>
+    <text x="68" y="346" fill="#7a796f">· 程序退出前：内存一直被占</text>
+  </g>
+
+  <!-- 右：修复版 -->
+  <rect x="485" y="100" width="430" height="270" rx="12" fill="#eef4e8" stroke="#7fa66a" stroke-width="2.6" filter="url(#rough)"/>
+  <text x="508" y="130" font-size="15" font-weight="700" fill="#5c7a4e">修复版：回头路用弱引用</text>
+  <g filter="url(#rough)">
+    <rect x="530" y="160" width="150" height="56" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2.4"/>
+    <rect x="730" y="160" width="150" height="56" rx="9" fill="#fffdf6" stroke="#7fa66a" stroke-width="2.4"/>
+  </g>
+  <text x="605" y="184" text-anchor="middle" font-size="14">GoodParent</text>
+  <text x="605" y="204" text-anchor="middle" font-size="12" fill="#5c7a4e">kids: shared_ptr</text>
+  <text x="805" y="184" text-anchor="middle" font-size="14">GoodChild</text>
+  <text x="805" y="204" text-anchor="middle" font-size="12" fill="#5c7a4e">up: weak_ptr</text>
+  <line x1="683" y1="176" x2="727" y2="176" stroke="#7fa66a" stroke-width="2.8" marker-end="url(#arr)"/>
+  <line x1="727" y1="206" x2="683" y2="206" stroke="#a8a79c" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#arr)"/>
+  <text x="705" y="240" text-anchor="middle" font-size="12.5" fill="#5c7a4e">强↓ 弱⇢ 不成环</text>
+  <g font-size="13" fill="#3f3e38">
+    <text x="508" y="268">作用域结束后：</text>
+    <text x="508" y="294" fill="#5c7a4e" font-weight="700">· 析构正常：好孩子 → 好爸爸</text>
+    <text x="508" y="320" fill="#5c7a4e">· 存活归零，无泄漏</text>
+    <text x="508" y="346" fill="#7a796f">· child 需要父时 lock() 临时升级</text>
+  </g>
+
+  <!-- 底部：判定要点 -->
+  <g filter="url(#rough)">
+    <rect x="45" y="396" width="870" height="118" rx="12" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.4"/>
+  </g>
+  <text x="480" y="426" text-anchor="middle" font-size="15.5" font-weight="700" fill="#2f5d8a">循环引用判定要点（写进 checklist）</text>
+  <g font-size="14" fill="#3f3e38">
+    <text x="80" y="456">1. 所有权必须“单向化”：向下（父→子、容器→元素）用强引用，向上（子→父、回指）一律 weak</text>
+    <text x="80" y="484">2. 环不止发生在父子：观察者、回调持 this、缓存互相引用、双向链表节点 —— 凡“回头指”都要审</text>
+    <text x="80" y="508" font-size="13">3. 症状：进程存活越久内存越涨；静态计数器 / Day 13 的 LeakSanitizer 可以实锤</text>
+  </g>
+</svg>

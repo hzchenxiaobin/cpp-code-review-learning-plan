@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="'Bradley Hand','Comic Sans MS','Chalkboard SE','Kaiti SC','KaiTi',cursive">
+  <defs>
+    <filter id="rough" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="12" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1.5 1.5 L8.5 5 L1.5 8.5" fill="none" stroke="#4a4943" stroke-width="1.8" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" fill="#fffdf6"/>
+
+  <text x="480" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#3f3e38">控制块：shared_ptr 的心脏</text>
+  <text x="480" y="74" text-anchor="middle" font-size="15" fill="#7a796f">每个共享对象配一个堆上的控制块，负责记账</text>
+
+  <!-- 左：三个强引用者 -->
+  <g filter="url(#rough)">
+    <rect x="55" y="130" width="150" height="48" rx="9" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.2"/>
+    <rect x="55" y="205" width="150" height="48" rx="9" fill="#eef4fa" stroke="#5b8db8" stroke-width="2.2"/>
+    <rect x="55" y="280" width="150" height="48" rx="9" fill="#f4f3ee" stroke="#a8a79c" stroke-width="2" stroke-dasharray="6 4"/>
+  </g>
+  <g font-size="13.5" fill="#3f3e38">
+    <text x="130" y="159" text-anchor="middle">shared_ptr p1</text>
+    <text x="130" y="234" text-anchor="middle">shared_ptr p2</text>
+    <text x="130" y="309" text-anchor="middle">weak_ptr w</text>
+  </g>
+
+  <!-- 中：堆对象 + 控制块 -->
+  <g filter="url(#rough)">
+    <rect x="560" y="120" width="170" height="70" rx="10" fill="#dcebf7" stroke="#5b8db8" stroke-width="2.6"/>
+    <rect x="560" y="230" width="330" height="98" rx="10" fill="#fbeedd" stroke="#e09552" stroke-width="2.6"/>
+  </g>
+  <text x="645" y="150" text-anchor="middle" font-size="14.5" font-weight="700">T 对象（堆）</text>
+  <text x="645" y="174" text-anchor="middle" font-size="12.5" fill="#2f5d8a">make_shared 时与控制块同块内存</text>
+  <text x="725" y="258" text-anchor="middle" font-size="14.5" font-weight="700" fill="#a3663a">控制块（堆）</text>
+  <g font-size="12.5" fill="#3f3e38">
+    <text x="585" y="284">强计数 strong = 2</text>
+    <text x="585" y="304">弱计数 weak = 1</text>
+    <text x="585" y="324">删除器 / allocator</text>
+  </g>
+
+  <!-- 引用箭头 -->
+  <g stroke="#5b8db8" stroke-width="2.2" fill="none" marker-end="url(#arr)">
+    <path d="M 208 154 C 350 150 480 140 556 148"/>
+    <path d="M 208 229 C 350 235 480 200 556 168"/>
+  </g>
+  <g stroke="#a8a79c" stroke-width="2.2" fill="none" stroke-dasharray="7 5" marker-end="url(#arr)">
+    <path d="M 208 304 C 380 320 460 300 556 290"/>
+  </g>
+  <text x="350" y="126" font-size="12.5" fill="#2f5d8a">强引用：指向对象 + 参与计数</text>
+  <text x="330" y="330" font-size="12.5" fill="#7a796f">弱引用：只看控制块，不指对象、不计数</text>
+
+  <!-- 事件时间线 -->
+  <rect x="45" y="356" width="870" height="128" rx="12" fill="#f7f9f5" stroke="#7fa66a" stroke-width="2" filter="url(#rough)"/>
+  <text x="70" y="384" font-size="14.5" font-weight="700" fill="#5c7a4e">计数事件表</text>
+  <g font-size="13.5" fill="#3f3e38">
+    <text x="70" y="412">拷贝 shared_ptr：strong +1　｜　移动：±0（换个主人）　｜　reset / 离开作用域：strong -1</text>
+    <text x="70" y="440">strong 减到 0 → 析构 T 对象（此刻！）　｜　weak 也减到 0 → 释放控制块本身</text>
+    <text x="70" y="468" fill="#a3663a">推论：只要有 weak_ptr 活着，make_shared 的那块内存就拆不掉（对象已析构，控制块还在记账）</text>
+  </g>
+</svg>
